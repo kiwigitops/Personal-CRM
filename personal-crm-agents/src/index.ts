@@ -27,7 +27,7 @@ async function main() {
 
   await prisma.$connect();
   const worker = createCrmWorker({ logger, memoryProvider, prisma, redis });
-  const app = Fastify({ logger });
+  const app = Fastify({ loggerInstance: logger });
 
   app.get("/health/live", async () => ({
     memoryProvider: memoryProvider.name,

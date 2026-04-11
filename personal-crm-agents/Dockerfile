@@ -19,8 +19,8 @@ ENV NODE_ENV=production
 COPY --from=deps /app/personal-crm-agents/node_modules ./personal-crm-agents/node_modules
 COPY --from=build /app/personal-crm-agents/dist ./personal-crm-agents/dist
 COPY --from=build /app/personal-crm-agents/generated ./personal-crm-agents/generated
+COPY --from=build /app/personal-crm-agents/generated ./personal-crm-agents/dist/generated
 COPY personal-crm-agents/package*.json ./personal-crm-agents/
 WORKDIR /app/personal-crm-agents
 EXPOSE 4100
 CMD ["npm", "run", "start"]
-
