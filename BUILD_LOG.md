@@ -13,3 +13,13 @@
 - Added documentation repo with architecture, repo map, local development, deployment, data model, API, auth, memory, agents, ADRs, troubleshooting, and backlog docs.
 - Added root CI workflow, third-party notices, docker ignore, editor config, and startup documentation.
 - Verification completed: API lint/typecheck/test/build, agents lint/typecheck/test/build, clients lint/typecheck/test, web production build, Prisma validate/generate, and Docker Compose config validation. Docker daemon was not running locally, so full container boot was not executed in this session.
+
+## 2026-04-11
+
+- Recovered Docker Desktop/WSL enough to run the local containerized stack.
+- Fixed container runtime startup issues: corrected compiled API and agents entrypoints, removed the Prisma migration UTF-8 BOM, copied generated Prisma clients into runtime images, and updated the agents Fastify logger wiring.
+- Rebuilt and started the local Docker stack with reverse proxy, web app, API, agents worker, PostgreSQL, Redis, MailHog, MinIO, Prometheus, and Grafana.
+- Verified deployed health endpoints through the proxy, API docs, the web app, and the agents readiness endpoint.
+- Ran the demo seed flow through the API and agents queue; confirmed the dashboard returns seeded CRM data for `owner@personal-crm.local`.
+- Committed the runtime deployment fix locally as `eb6de74 Fix container runtime startup`.
+- GitHub publishing remains blocked until GitHub authentication or a repository remote is available on this machine.
