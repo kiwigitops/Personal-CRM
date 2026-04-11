@@ -1,0 +1,43 @@
+{
+  "name": "@personal-crm/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@personal-crm/api-client": "file:../../packages/api-client",
+    "@personal-crm/types": "file:../../packages/types",
+    "@personal-crm/ui": "file:../../packages/ui",
+    "@personal-crm/utils": "file:../../packages/utils",
+    "@tanstack/react-query": "^5.74.4",
+    "@tanstack/react-table": "^8.21.3",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.1.0",
+    "next": "^15.3.1",
+    "next-themes": "^0.4.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.56.1",
+    "sonner": "^2.0.3",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "autoprefixer": "^10.4.21",
+    "jsdom": "^26.1.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}

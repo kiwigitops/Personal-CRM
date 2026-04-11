@@ -1,0 +1,34 @@
+@import "@personal-crm/ui/styles.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+::selection {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}
+
+.crm-surface {
+  background-image:
+    radial-gradient(circle at 12% 12%, rgba(14, 165, 233, 0.18), transparent 28%),
+    radial-gradient(circle at 85% 0%, rgba(34, 197, 94, 0.14), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent);
+}
+

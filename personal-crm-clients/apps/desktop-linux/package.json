@@ -1,0 +1,33 @@
+{
+  "name": "@personal-crm/desktop-linux",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tauri dev",
+    "dev:vite": "vite --host 0.0.0.0 --port 5174",
+    "build": "tauri build",
+    "build:vite": "vite build",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@personal-crm/api-client": "file:../../packages/api-client",
+    "@personal-crm/types": "file:../../packages/types",
+    "@personal-crm/ui": "file:../../packages/ui",
+    "@personal-crm/utils": "file:../../packages/utils",
+    "@tanstack/react-query": "^5.74.4",
+    "@tauri-apps/api": "^2.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.5.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.3",
+    "vitest": "^3.1.2"
+  }
+}

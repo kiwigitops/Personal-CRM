@@ -1,0 +1,76 @@
+@import "@personal-crm/ui/styles.css";
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "DM Sans", sans-serif;
+}
+
+.desktop-shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(14, 165, 233, 0.2), transparent 32%),
+    hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+aside {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: hsl(var(--card));
+  border-right: 1px solid hsl(var(--border));
+}
+
+aside button {
+  border: 0;
+  border-radius: 16px;
+  padding: 12px;
+  text-align: left;
+}
+
+aside button.active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+main {
+  padding: 28px;
+}
+
+.desktop-auth {
+  align-items: center;
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-card,
+.settings-card {
+  display: grid;
+  gap: 14px;
+  max-width: 460px;
+}
+
+.metrics {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.space {
+  display: grid;
+  gap: 18px;
+}
+
+.contact-row {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto 1fr auto;
+}
+

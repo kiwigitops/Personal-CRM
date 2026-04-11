@@ -1,0 +1,10 @@
+services:
+  api:
+    volumes:
+      - ../personal-crm-api/src:/app/personal-crm-api/src:ro
+      - ../personal-crm-api/prisma:/app/personal-crm-api/prisma:ro
+
+  agents:
+    volumes:
+      - ../personal-crm-agents/src:/app/personal-crm-agents/src:ro
+

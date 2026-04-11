@@ -1,0 +1,31 @@
+{
+  "name": "@personal-crm/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "App.tsx",
+  "scripts": {
+    "dev": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "build": "expo export",
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@personal-crm/api-client": "file:../../packages/api-client",
+    "@personal-crm/types": "file:../../packages/types",
+    "@personal-crm/ui": "file:../../packages/ui",
+    "@personal-crm/utils": "file:../../packages/utils",
+    "@tanstack/react-query": "^5.74.4",
+    "expo": "^53.0.0",
+    "expo-secure-store": "^14.2.3",
+    "react": "^19.1.0",
+    "react-native": "^0.79.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}

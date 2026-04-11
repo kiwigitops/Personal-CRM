@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Personal CRM",
+    "slug": "personal-crm",
+    "scheme": "personalcrm",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0369a1"
+      }
+    },
+    "extra": {
+      "apiUrl": "${EXPO_PUBLIC_API_URL}"
+    }
+  }
+}
+

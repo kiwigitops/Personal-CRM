@@ -1,0 +1,41 @@
+:root {
+  --font-sans: "DM Sans";
+  --font-display: "Fraunces";
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --muted: 210 24% 94%;
+  --muted-foreground: 217 19% 39%;
+  --border: 214 31% 88%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --primary: 201 96% 32%;
+  --primary-foreground: 210 40% 98%;
+  --accent: 154 57% 92%;
+  --accent-foreground: 163 88% 18%;
+  --success: 145 63% 42%;
+  --warning: 33 100% 50%;
+  --danger: 0 72% 51%;
+}
+
+.dark {
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+  --muted: 222 31% 18%;
+  --muted-foreground: 215 20% 74%;
+  --border: 217 19% 27%;
+  --card: 222 39% 14%;
+  --card-foreground: 210 40% 98%;
+  --primary: 191 91% 56%;
+  --primary-foreground: 222 47% 11%;
+  --accent: 163 66% 18%;
+  --accent-foreground: 155 78% 89%;
+  --success: 145 63% 42%;
+  --warning: 38 92% 50%;
+  --danger: 0 84% 60%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+

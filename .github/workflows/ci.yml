@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: personal-crm-api/package-lock.json
+      - run: npm ci
+        working-directory: personal-crm-api
+      - run: DATABASE_URL=postgresql://postgres:postgres@localhost:5432/personal_crm npm run prisma:generate
+        working-directory: personal-crm-api
+      - run: npm run typecheck
+        working-directory: personal-crm-api
+      - run: npm run test
+        working-directory: personal-crm-api
+
+  agents:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: personal-crm-agents/package-lock.json
+      - run: npm ci
+        working-directory: personal-crm-agents
+      - run: DATABASE_URL=postgresql://postgres:postgres@localhost:5432/personal_crm npm run prisma:generate
+        working-directory: personal-crm-agents
+      - run: npm run typecheck
+        working-directory: personal-crm-agents
+      - run: npm run test
+        working-directory: personal-crm-agents
+
+  clients:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: personal-crm-clients/package-lock.json
+      - run: npm ci
+        working-directory: personal-crm-clients
+      - run: npm run typecheck
+        working-directory: personal-crm-clients
+
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cp .env.example .env
+        working-directory: personal-crm-platform
+      - run: docker compose config
+        working-directory: personal-crm-platform

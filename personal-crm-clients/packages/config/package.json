@@ -1,0 +1,12 @@
+{
+  "name": "@personal-crm/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint-base": "./eslint.base.mjs",
+    "./tailwind-preset": "./tailwind-preset.ts",
+    "./env": "./src/env.ts"
+  }
+}
+

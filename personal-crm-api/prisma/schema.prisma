@@ -1,0 +1,452 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator agentsClient {
+  provider = "prisma-client-js"
+  output   = "../../personal-crm-agents/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum InteractionType {
+  CALL
+  TEXT
+  EMAIL
+  MEETING
+  NOTE
+  TASK
+}
+
+enum FollowupStatus {
+  PENDING
+  DONE
+  SNOOZED
+  CANCELED
+}
+
+enum FollowupChannel {
+  EMAIL
+  TEXT
+  CALL
+  MEETING
+  NOTE
+}
+
+enum ReminderChannel {
+  IN_APP
+  EMAIL
+  PUSH
+}
+
+enum AgentJobType {
+  SEED_DATA
+  FOLLOWUP
+  MEMORY
+  DEDUPE
+  ENRICHMENT
+  TIMELINE_SUMMARY
+  RELATIONSHIP_HEALTH
+}
+
+enum AgentJobStatus {
+  QUEUED
+  RUNNING
+  RETRYING
+  COMPLETED
+  FAILED
+}
+
+enum AuditActorType {
+  USER
+  SYSTEM
+  AGENT
+}
+
+model User {
+  id                 String                @id @default(cuid())
+  email              String                @unique
+  passwordHash       String
+  fullName           String
+  avatarUrl          String?
+  currentWorkspaceId String?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  deletedAt          DateTime?
+  sessions           Session[]
+  memberships        Membership[]
+  interactions       Interaction[]
+  followupsCreated   Followup[]            @relation("FollowupCreator")
+  auditEvents        AuditEvent[]
+  resetTokens        PasswordResetToken[]
+  sentInvitations    WorkspaceInvitation[] @relation("InvitationSender")
+  savedFilters       SavedFilter[]
+}
+
+model Session {
+  id               String    @id @default(cuid())
+  userId           String
+  refreshTokenHash String
+  userAgent        String?
+  ipAddress        String?
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model Workspace {
+  id                  String                @id @default(cuid())
+  name                String
+  slug                String                @unique
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  deletedAt           DateTime?
+  memberships         Membership[]
+  companies           Company[]
+  contacts            Contact[]
+  contactCompanyLinks ContactCompanyLink[]
+  contactTags         ContactTag[]
+  tags                Tag[]
+  interactions        Interaction[]
+  followups           Followup[]
+  reminders           Reminder[]
+  memoryEntries       MemoryEntry[]
+  memorySummaries     MemorySummary[]
+  agentJobs           AgentJob[]
+  auditEvents         AuditEvent[]
+  attachments         Attachment[]
+  savedFilters        SavedFilter[]
+  invitations         WorkspaceInvitation[]
+}
+
+model Membership {
+  id          String         @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        MembershipRole @default(MEMBER)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+  workspace   Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId, role])
+}
+
+model WorkspaceInvitation {
+  id          String           @id @default(cuid())
+  workspaceId String
+  invitedById String
+  email       String
+  role        MembershipRole   @default(MEMBER)
+  tokenHash   String
+  status      InvitationStatus @default(PENDING)
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invitedBy   User             @relation("InvitationSender", fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, email, status])
+}
+
+model Company {
+  id          String               @id @default(cuid())
+  workspaceId String
+  name        String
+  website     String?
+  industry    String?
+  description String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  deletedAt   DateTime?
+  workspace   Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contacts    ContactCompanyLink[]
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId, deletedAt])
+}
+
+model Contact {
+  id                   String               @id @default(cuid())
+  workspaceId          String
+  firstName            String
+  lastName             String
+  preferredName        String?
+  email                String?
+  phone                String?
+  title                String?
+  city                 String?
+  linkedinUrl          String?
+  avatarUrl            String?
+  notes                String?
+  relationshipStrength Int                  @default(50)
+  warmthScore          Int                  @default(50)
+  staleDaysCache       Int                  @default(0)
+  source               String?
+  lastInteractionAt    DateTime?
+  nextFollowupAt       DateTime?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  deletedAt            DateTime?
+  workspace            Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  companies            ContactCompanyLink[]
+  tags                 ContactTag[]
+  interactions         Interaction[]
+  followups            Followup[]
+  memoryEntries        MemoryEntry[]
+  memorySummaries      MemorySummary[]
+  reminders            Reminder[]
+  attachments          Attachment[]
+  agentJobs            AgentJob[]
+
+  @@index([workspaceId, lastName, firstName])
+  @@index([workspaceId, email])
+  @@index([workspaceId, phone])
+  @@index([workspaceId, deletedAt])
+}
+
+model ContactCompanyLink {
+  id          String    @id @default(cuid())
+  workspaceId String
+  contactId   String
+  companyId   String
+  title       String?
+  isPrimary   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact     Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, companyId])
+  @@index([workspaceId, companyId])
+}
+
+model Tag {
+  id          String       @id @default(cuid())
+  workspaceId String
+  name        String
+  color       String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contacts    ContactTag[]
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId, deletedAt])
+}
+
+model ContactTag {
+  id          String    @id @default(cuid())
+  workspaceId String
+  contactId   String
+  tagId       String
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact     Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  tag         Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, tagId])
+  @@index([workspaceId, tagId])
+}
+
+model Interaction {
+  id            String          @id @default(cuid())
+  workspaceId   String
+  contactId     String
+  createdById   String
+  type          InteractionType
+  title         String
+  notes         String?
+  outcome       String?
+  happenedAt    DateTime
+  createdAt     DateTime        @default(now())
+  workspace     Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact       Contact         @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  createdBy     User            @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  memoryEntries MemoryEntry[]
+
+  @@index([workspaceId, contactId, happenedAt])
+}
+
+model Followup {
+  id               String          @id @default(cuid())
+  workspaceId      String
+  contactId        String
+  createdById      String
+  dueAt            DateTime
+  status           FollowupStatus  @default(PENDING)
+  channel          FollowupChannel
+  prompt           String
+  suggestedMessage String?
+  completedAt      DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deletedAt        DateTime?
+  workspace        Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact          Contact         @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  createdBy        User            @relation("FollowupCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  reminders        Reminder[]
+
+  @@index([workspaceId, status, dueAt])
+  @@index([contactId, status])
+}
+
+model Reminder {
+  id           String          @id @default(cuid())
+  workspaceId  String
+  followupId   String
+  contactId    String
+  channel      ReminderChannel @default(IN_APP)
+  scheduledFor DateTime
+  deliveredAt  DateTime?
+  readAt       DateTime?
+  payload      Json?
+  createdAt    DateTime        @default(now())
+  workspace    Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  followup     Followup        @relation(fields: [followupId], references: [id], onDelete: Cascade)
+  contact      Contact         @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, readAt, scheduledFor])
+}
+
+model MemoryEntry {
+  id                  String       @id @default(cuid())
+  workspaceId         String
+  contactId           String
+  sourceInteractionId String?
+  kind                String
+  content             String
+  factKey             String?
+  confidence          Float        @default(0.5)
+  createdAt           DateTime     @default(now())
+  workspace           Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact             Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  sourceInteraction   Interaction? @relation(fields: [sourceInteractionId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, contactId, createdAt])
+}
+
+model MemorySummary {
+  id             String    @id @default(cuid())
+  workspaceId    String
+  contactId      String
+  brief          String
+  keyFacts       Json
+  nextBestAction String
+  warmthScore    Int
+  staleDays      Int
+  summaryVersion Int       @default(1)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact        Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId])
+  @@index([workspaceId, warmthScore])
+}
+
+model AgentJob {
+  id            String         @id @default(cuid())
+  workspaceId   String
+  contactId     String?
+  enqueuedById  String?
+  type          AgentJobType
+  queueName     String
+  status        AgentJobStatus @default(QUEUED)
+  payload       Json
+  result        Json?
+  attempts      Int            @default(0)
+  lastError     String?
+  externalJobId String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact       Contact?       @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, status, createdAt])
+  @@index([type, status])
+}
+
+model AuditEvent {
+  id          String         @id @default(cuid())
+  workspaceId String
+  actorType   AuditActorType
+  actorUserId String?
+  action      String
+  entityType  String
+  entityId    String
+  metadata    Json
+  createdAt   DateTime       @default(now())
+  workspace   Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  actorUser   User?          @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, entityType, entityId])
+  @@index([workspaceId, createdAt])
+}
+
+model Attachment {
+  id          String    @id @default(cuid())
+  workspaceId String
+  contactId   String?
+  fileName    String
+  mimeType    String
+  sizeBytes   Int
+  storageKey  String
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contact     Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, contactId])
+}
+
+model SavedFilter {
+  id          String    @id @default(cuid())
+  workspaceId String
+  userId      String
+  name        String
+  query       String?
+  tagIds      String[]
+  staleOnly   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, userId])
+}
