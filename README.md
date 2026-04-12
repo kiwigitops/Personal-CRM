@@ -1,98 +1,99 @@
-# Personal CRM Workspace
+<div align="center">
+  <img src="assets/personal-crm.svg" width="120" alt="Personal CRM logo" />
+  <h1>Personal CRM</h1>
+  <p><b>A local-first SaaS-style relationship workspace with web, mobile, desktop, API, agents, memory, and Docker orchestration.</b></p>
+  <a href="https://github.com/kiwigitops/Personal-CRM/stargazers"><img src="https://img.shields.io/github/stars/kiwigitops/Personal-CRM?style=flat-square" alt="Stars"></a>
+  <a href="https://github.com/kiwigitops/Personal-CRM/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/kiwigitops/Personal-CRM/ci.yml?branch=main&label=ci&style=flat-square" alt="CI"></a>
+  <img src="https://img.shields.io/badge/docker-compose-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker Compose">
+  <img src="https://img.shields.io/badge/typescript-first-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript first">
+</div>
 
-Personal CRM is a production-minded, multi-repo workspace for a SaaS-style relationship intelligence platform. It includes:
+<br/>
 
-- `personal-crm-clients`: web, mobile, desktop, and shared frontend packages
-- `personal-crm-api`: versioned REST API, auth, Prisma schema, CRM modules, and tests
-- `personal-crm-agents`: queue-driven CRM intelligence workers and memory providers
-- `personal-crm-platform`: Docker-first local infrastructure, reverse proxy, observability, and deployment assets
-- `personal-crm-docs`: architecture, operational docs, ADRs, and troubleshooting guidance
+## Why
 
-Use the docs in `personal-crm-docs` for the full architecture and local development guide. The root workspace also keeps a running build log in `BUILD_LOG.md`.
+Personal CRM helps you keep relationships warm without turning people into tasks. It tracks contacts, companies, notes, interactions, reminders, tags, relationship strength, and suggested next actions in one workspace.
 
-## Quick Start
+The project is a full-stack monorepo built to feel like a real product, not a scaffold. It includes a polished web app, native-oriented mobile shell, Linux desktop shell, auth-aware API, PostgreSQL schema, Redis-backed jobs, CRM intelligence agents, memory summaries, seed data, observability, and Dockerized local development.
 
-Docker-first:
+## Features
 
-```bash
+| Area | What is included |
+| :--- | :--- |
+| CRM | Contacts, companies, tags, notes, timelines, follow-ups, saved filters, CSV import/export, dedupe suggestions |
+| Intelligence | Relationship briefs, warmth scoring, stale-contact detection, next-best-action suggestions, deterministic demo seeding |
+| Apps | Next.js web app, Expo mobile app, Tauri Linux desktop shell, shared UI/types/API client packages |
+| Backend | Versioned REST API, auth, RBAC, workspace membership, Prisma/PostgreSQL, OpenAPI docs, audit trail |
+| Platform | Docker Compose stack with reverse proxy, API, web, agents, PostgreSQL, Redis, MailHog, MinIO, Prometheus, Grafana |
+
+## Run Locally
+
+```powershell
 cd personal-crm-platform
-cp .env.example .env
-docker compose up --build
+docker compose up --build -d
+node .\scripts\reset-demo.mjs
 ```
 
-Seed rich demo data after the stack is up:
-
-```bash
-cd personal-crm-platform
-./scripts/reset-demo.sh
-```
+Then open [http://localhost:8080](http://localhost:8080).
 
 Demo login:
 
-- Email: `owner@personal-crm.local`
-- Password: `password123`
-
-Local app URLs:
-
-- Web app: `http://localhost:8080`
-- API docs: `http://localhost:8080/api/docs`
-- MailHog: `http://localhost:8025`
-- Grafana: `http://localhost:3001`
-- Prometheus: `http://localhost:9090`
-
-Direct Node development:
-
-```bash
-cd personal-crm-platform
-docker compose up postgres redis mailhog minio prometheus grafana
+```text
+Email: owner@personal-crm.local
+Password: password123
 ```
 
-```bash
-cd personal-crm-api
-npm install
-npm run prisma:deploy
-npm run seed
-npm run dev
-```
+Useful local URLs:
 
-```bash
-cd personal-crm-agents
-npm install
-npm run prisma:generate
-npm run dev
-```
+| Service | URL |
+| :--- | :--- |
+| Web app | http://localhost:8080 |
+| API docs | http://localhost:8080/api/docs |
+| API health | http://localhost:8080/api/v1/health/ready |
+| Agents health | http://localhost:4100/health/ready |
+| MailHog | http://localhost:8025 |
+| Grafana | http://localhost:3001 |
+| Prometheus | http://localhost:9090 |
+| MinIO console | http://localhost:9001 |
 
-```bash
-cd personal-crm-clients
-npm install
-npm run dev:web
-```
+## Workspace
 
-Mobile and desktop:
+| Path | Purpose |
+| :--- | :--- |
+| `personal-crm-clients` | Web, mobile, desktop, and shared frontend packages |
+| `personal-crm-api` | REST API, auth, CRM modules, Prisma schema, seed data, and tests |
+| `personal-crm-agents` | Queue-driven CRM intelligence agents and memory providers |
+| `personal-crm-platform` | Docker Compose, reverse proxy, observability, scripts, and deployment assets |
+| `personal-crm-docs` | Architecture, setup, deployment, data model, API, memory, agents, and ADR docs |
 
-```bash
-cd personal-crm-clients
-npm run dev:mobile
-npm run dev:desktop
-```
-
-## Verification
-
-The workspace includes lint, typecheck, test, build, Prisma validation, and Docker Compose config checks. See `BUILD_LOG.md` for the latest verification status.
-
-## Publish To GitHub
-
-The workspace is designed to publish most efficiently as one GitHub repository. The repo directories are intentionally kept together so Docker Compose, CI, shared packages, docs, API, agents, clients, and deployment assets can move atomically.
-
-Use a GitHub token with repo/create-repo permissions:
+## Development
 
 ```powershell
-$env:GH_TOKEN = "ghp_replace_with_your_token"
-.\scripts\publish-github.ps1 -Owner "YOUR_GITHUB_USER_OR_ORG" -RepoName "Personal-CRM" -Visibility private
+# API
+cd personal-crm-api
+npm install
+npm run test
+npm run build
+
+# Agents
+cd ..\personal-crm-agents
+npm install
+npm run test
+npm run build
+
+# Clients
+cd ..\personal-crm-clients
+npm install
+npm run test
+npm run build:web
 ```
 
-The script creates the GitHub repo if it does not exist, sets `origin`, renames the current branch to `main`, and pushes without embedding the token in the remote URL.
+See the docs for deeper setup and operations:
 
-## Repo Map
-
-See `personal-crm-docs/repo-map.md`.
+| Document | Link |
+| :--- | :--- |
+| Architecture | [personal-crm-docs/architecture-overview.md](personal-crm-docs/architecture-overview.md) |
+| Local development | [personal-crm-docs/local-development.md](personal-crm-docs/local-development.md) |
+| Deployment | [personal-crm-docs/deployment.md](personal-crm-docs/deployment.md) |
+| Data model | [personal-crm-docs/data-model.md](personal-crm-docs/data-model.md) |
+| Agents and skills | [personal-crm-docs/agents-and-skills.md](personal-crm-docs/agents-and-skills.md) |
