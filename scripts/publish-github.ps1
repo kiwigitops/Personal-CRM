@@ -126,8 +126,8 @@ if (-not $repo) {
 }
 
 $remoteUrl = "https://github.com/$targetOwner/${RepoName}.git"
-$existingOrigin = git remote get-url origin 2>$null
-if ($LASTEXITCODE -eq 0) {
+$remotes = git remote
+if ($remotes -contains "origin") {
   Write-Step "Updating origin remote"
   git remote set-url origin $remoteUrl
 } else {
