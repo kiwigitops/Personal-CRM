@@ -74,7 +74,17 @@ if ($dirty) {
 
 $token = if ($env:GH_TOKEN) { $env:GH_TOKEN } else { $env:GITHUB_TOKEN }
 if (-not $token) {
-  throw "Set GH_TOKEN or GITHUB_TOKEN to a GitHub personal access token with repo/create-repo access, then rerun this script."
+  $gh = Get-Command gh -ErrorAction SilentlyContinue
+  if ($gh) {
+    $candidateToken = gh auth token 2>$null
+    if ($LASTEXITCODE -eq 0 -and $candidateToken) {
+      $token = $candidateToken.Trim()
+    }
+  }
+}
+
+if (-not $token) {
+  throw "Set GH_TOKEN or GITHUB_TOKEN to a GitHub personal access token with repo/create-repo access, or authenticate GitHub CLI with gh auth login, then rerun this script."
 }
 
 $headers = @{
