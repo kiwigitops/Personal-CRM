@@ -22,6 +22,8 @@
 - Verified deployed health endpoints through the proxy, API docs, the web app, and the agents readiness endpoint.
 - Ran the demo seed flow through the API and agents queue; confirmed the dashboard returns seeded CRM data for `owner@personal-crm.local`.
 - Committed the runtime deployment fix locally as `eb6de74 Fix container runtime startup`.
-- GitHub publishing remains blocked until GitHub authentication or a repository remote is available on this machine.
+- GitHub publishing was initially blocked until GitHub authentication was completed on this machine.
 - Added `scripts/publish-github.ps1` to create/push the monorepo to GitHub once `GH_TOKEN` or `GITHUB_TOKEN` is available.
 - Authenticated GitHub CLI for `kiwigitops`, created the private `kiwigitops/Personal-CRM` repository, set `origin`, renamed the branch to `main`, and pushed the monorepo to GitHub.
+- Refreshed the root README for public presentation with a centered Waza-style badge header, star count badge, concise setup, and docs links.
+- Changed `kiwigitops/Personal-CRM` visibility from private to public.
