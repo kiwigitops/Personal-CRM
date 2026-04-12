@@ -80,6 +80,19 @@ npm run dev:desktop
 
 The workspace includes lint, typecheck, test, build, Prisma validation, and Docker Compose config checks. See `BUILD_LOG.md` for the latest verification status.
 
+## Publish To GitHub
+
+The workspace is designed to publish most efficiently as one GitHub repository. The repo directories are intentionally kept together so Docker Compose, CI, shared packages, docs, API, agents, clients, and deployment assets can move atomically.
+
+Use a GitHub token with repo/create-repo permissions:
+
+```powershell
+$env:GH_TOKEN = "ghp_replace_with_your_token"
+.\scripts\publish-github.ps1 -Owner "YOUR_GITHUB_USER_OR_ORG" -RepoName "Personal-CRM" -Visibility private
+```
+
+The script creates the GitHub repo if it does not exist, sets `origin`, renames the current branch to `main`, and pushes without embedding the token in the remote URL.
+
 ## Repo Map
 
 See `personal-crm-docs/repo-map.md`.
