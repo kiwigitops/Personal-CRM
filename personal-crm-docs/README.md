@@ -1,11 +1,10 @@
-# Personal CRM Docs
+# Personal CRM Legacy Docs
 
-This documentation repo captures architecture, local development, deployment, operations, and decision records for the Personal CRM workspace.
+This folder contains the original project docs. The current canonical developer docs now live in `../docs`, the user docs live in `../docs-user`, and future AI context lives in `../AI_README.md`.
 
-Start with:
+Keep this folder only for historical reference until its useful pages are migrated or removed. Start new work from:
 
-- `repo-map.md`
-- `local-development.md`
-- `architecture-overview.md`
-- `api-overview.md`
-
+- `../AI_README.md`
+- `../docs/overview.md`
+- `../docs/known-issues.md`
+- `../docs/security.md`
